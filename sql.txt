@@ -1,0 +1,224 @@
+Duplicate Detection.sql
+--Run against Bronze_FinOps_Entity
+/*
+SELECT first_name, last_name, COUNT(*)
+FROM customers
+GROUP BY first_name, last_name
+HAVING COUNT(*) > 1;	
+--*/
+USE Bronze_FinOps_Entity;
+--Generates a SQL script to check a table for duplicates
+--/*--One row for all columns.
+WITH clauses AS (
+SELECT
+    CONCAT('SELECT ''', TABLE_NAME, ''' AS TABLE_NAME') AS TABLE_NAME,
+    --'COUNT(*) AS COUNT_ALL_RECORDS' AS COUNT_ALL,
+    --TABLE_NAME,
+    QUOTENAME(COLUMN_NAME) AS COLUMN_NAME,
+    'COUNT(*)' AS ROW_COUNT,
+    'GROUP BY ' AS GROUP_BY,
+    --CONCAT('COUNT(DISTINCT ', COLUMN_NAME, ') AS COUNTDISTINCT_', COLUMN_NAME) AS COUNT_DISTINCT,
+    CONCAT('FROM ', QUOTENAME(TABLE_SCHEMA), '.', QUOTENAME(TABLE_NAME)) AS FROM_CLAUSE
+FROM Bronze_FinOps_Entity.INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_CATALOG = 'Bronze_FinOps_Entity'
+      AND TABLE_SCHEMA = 'dbo'
+      AND TABLE_NAME = 'financialdimensionvalueentity'--'omlegalentity'
+      --AND COLUMN_NAME <> 'RECID' AND COLUMN_NAME LIKE '%ID'
+      --AND COLUMN_NAME IN ('', '')
+)
+,
+clauses_concat AS (
+SELECT
+    TABLE_NAME,
+    STRING_AGG(CAST(COLUMN_NAME AS NVARCHAR(MAX)), ', ') AGG,--Overcome 8K STRING_AGG Limit.,
+    ROW_COUNT,
+    FROM_CLAUSE,
+    GROUP_BY
+FROM clauses
+GROUP BY TABLE_NAME, ROW_COUNT, FROM_CLAUSE, GROUP_BY
+)
+
+SELECT
+    CONCAT(TABLE_NAME, ', COUNT(*) AS ROW_COUNT, ', ROW_COUNT, ' AS DUPLICATE_COUNT, ', AGG, ' ', FROM_CLAUSE, ' ', GROUP_BY, ' ', AGG, ' HAVING COUNT(*) > 1') AS [SQL]
+FROM clauses_concat
+--*/
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Primary Keys from Metadata (Unpivoted).sql
+WITH row_counts AS (
+   SELECT 'assetlocationentity' AS TABLE_NAME, COUNT(*) AS COUNT_ALL_RECORDS, COUNT(DISTINCT LOCATIONID) AS COUNTDISTINCT_LOCATIONID, COUNT(DISTINCT LOCATION) AS COUNTDISTINCT_LOCATION, COUNT(DISTINCT NAME) AS COUNTDISTINCT_NAME, COUNT(DISTINCT RECVERSION) AS COUNTDISTINCT_RECVERSION, COUNT(DISTINCT DATAAREAID) AS COUNTDISTINCT_DATAAREAID, COUNT(DISTINCT PARTITION) AS COUNTDISTINCT_PARTITION, COUNT(DISTINCT RECID) AS COUNTDISTINCT_RECID, COUNT(DISTINCT ADDRESSCOUNTRYREGIONID) AS COUNTDISTINCT_ADDRESSCOUNTRYREGIONID, COUNT(DISTINCT ADDRESSCOUNTRYREGIONISOCODE) AS COUNTDISTINCT_ADDRESSCOUNTRYREGIONISOCODE, COUNT(DISTINCT ADDRESSZIPCODE) AS COUNTDISTINCT_ADDRESSZIPCODE, COUNT(DISTINCT ADDRESSSTREET) AS COUNTDISTINCT_ADDRESSSTREET, COUNT(DISTINCT ADDRESSCITY) AS COUNTDISTINCT_ADDRESSCITY, COUNT(DISTINCT ADDRESSSTATE) AS COUNTDISTINCT_ADDRESSSTATE, COUNT(DISTINCT ADDRESSCOUNTY) AS COUNTDISTINCT_ADDRESSCOUNTY, COUNT(DISTINCT ADDRESSCITYINKANA) AS COUNTDISTINCT_ADDRESSCITYINKANA, COUNT(DISTINCT ADDRESSSTREETINKANA) AS COUNTDISTINCT_ADDRESSSTREETINKANA, COUNT(DISTINCT ADDRESSVALIDFROM) AS COUNTDISTINCT_ADDRESSVALIDFROM, COUNT(DISTINCT ADDRESSVALIDTO) AS COUNTDISTINCT_ADDRESSVALIDTO, COUNT(DISTINCT RECVERSION#2) AS COUNTDISTINCT_RECVERSION#2, COUNT(DISTINCT PARTITION#2) AS COUNTDISTINCT_PARTITION#2, COUNT(DISTINCT RECID#2) AS COUNTDISTINCT_RECID#2 FROM [dbo].[assetlocationentity]
+)
+--SELECT * FROM row_counts
+--/*
+SELECT
+    r.TABLE_NAME,
+    c.COLUMN_NAME,
+    c.COLUMN_VALUE
+FROM
+    row_counts r
+CROSS APPLY
+    (
+        VALUES
+        ('COUNT_ALL_RECORDS', COUNT_ALL_RECORDS),
+        ('COUNTDISTINCT_LOCATIONID', COUNTDISTINCT_LOCATIONID),
+        ('COUNTDISTINCT_LOCATION', COUNTDISTINCT_LOCATION),
+        ('COUNTDISTINCT_NAME', COUNTDISTINCT_NAME),
+        ('COUNTDISTINCT_RECVERSION', COUNTDISTINCT_RECVERSION),
+        ('COUNTDISTINCT_DATAAREAID', COUNTDISTINCT_DATAAREAID),
+        ('COUNTDISTINCT_PARTITION', COUNTDISTINCT_PARTITION),
+        ('COUNTDISTINCT_RECID', COUNTDISTINCT_RECID),
+        ('COUNTDISTINCT_ADDRESSCOUNTRYREGIONID', COUNTDISTINCT_ADDRESSCOUNTRYREGIONID),
+        ('COUNTDISTINCT_ADDRESSCOUNTRYREGIONISOCODE', COUNTDISTINCT_ADDRESSCOUNTRYREGIONISOCODE),
+        ('COUNTDISTINCT_ADDRESSZIPCODE', COUNTDISTINCT_ADDRESSZIPCODE),
+        ('COUNTDISTINCT_ADDRESSSTREET', COUNTDISTINCT_ADDRESSSTREET),
+        ('COUNTDISTINCT_ADDRESSCITY', COUNTDISTINCT_ADDRESSCITY),
+        ('COUNTDISTINCT_ADDRESSSTATE', COUNTDISTINCT_ADDRESSSTATE),
+        ('COUNTDISTINCT_ADDRESSCOUNTY', COUNTDISTINCT_ADDRESSCOUNTY),
+        ('COUNTDISTINCT_ADDRESSCITYINKANA', COUNTDISTINCT_ADDRESSCITYINKANA),
+        ('COUNTDISTINCT_ADDRESSSTREETINKANA', COUNTDISTINCT_ADDRESSSTREETINKANA),
+        ('COUNTDISTINCT_ADDRESSVALIDFROM', COUNTDISTINCT_ADDRESSVALIDFROM),
+        ('COUNTDISTINCT_ADDRESSVALIDTO', COUNTDISTINCT_ADDRESSVALIDTO),
+        ('COUNTDISTINCT_RECVERSION#2', COUNTDISTINCT_RECVERSION#2),
+        ('COUNTDISTINCT_PARTITION#2', COUNTDISTINCT_PARTITION#2),
+        ('COUNTDISTINCT_RECID#2', COUNTDISTINCT_RECID#2)
+    ) AS c(COLUMN_NAME, COLUMN_VALUE)
+--*/
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Primary Keys from Metadata V2.sql
+/*
+For a given table:
+    Count total rows
+    Count distinct values for each column
+    Generate SQL dynamically so you don’t hand-code columns
+*/
+USE Bronze_FinOps_Entity
+DECLARE @TableSchema SYSNAME = 'dbo';
+DECLARE @TableName SYSNAME = 'assetlocationentity';
+DECLARE @SQL NVARCHAR(MAX);
+
+-- Build the dynamic SELECT list
+WITH cols AS (
+    SELECT 
+        COLUMN_NAME
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = @TableSchema   
+      AND TABLE_NAME = @TableName
+      -- Optional filters:
+      -- AND COLUMN_NAME <> 'RECID'
+      -- AND COLUMN_NAME LIKE '%ID'
+)
+
+SELECT @SQL = 
+    'SELECT ' +
+    '''' + @TableName + ''' AS TABLE_NAME, ' +
+    'COUNT(*) AS COUNT_ALL_RECORDS, ' +
+    STRING_AGG(
+        'COUNT(DISTINCT ' + QUOTENAME(COLUMN_NAME) + ') AS ' + QUOTENAME('COUNTDISTINCT_' + COLUMN_NAME),
+        ', '
+    ) +
+    ' FROM ' + QUOTENAME(@TableSchema) + '.' + QUOTENAME(@TableName)
+FROM cols
+EXECUTE(@SQL)
+
+-- Debug (optional)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Primary Keys from Metadata.sql
+USE Bronze_FinOps_Entity
+GO
+
+/*
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_CATALOG = 'Bronze_FinOps_Entity'
+      AND TABLE_SCHEMA = 'dbo'
+      AND TABLE_NAME = 'omlegalentity'
+      AND COLUMN_NAME LIKE '%RECID%'
+--*/
+
+/*
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_CATALOG = 'Bronze_FinOps_Entity'
+      AND TABLE_SCHEMA = 'dbo'
+      AND TABLE_NAME = 'omlegalentity'
+      AND COLUMN_NAME <> 'RECID' AND COLUMN_NAME LIKE '%ID'
+ORDER BY TABLE_NAME, COLUMN_NAME
+--*/
+
+/*--One row per column.
+--DECLARE @SQL NVARCHAR(MAX)
+--SELECT @SQL = CONCAT('SELECT ''', TABLE_NAME, ''' AS TABLE_NAME', ', COUNT(', COLUMN_NAME, ') AS COUNT_', COLUMN_NAME, ', ', 'COUNT(DISTINCT ', COLUMN_NAME, ') AS COUNTDISTINCT_', COLUMN_NAME, ' FROM ', QUOTENAME(TABLE_SCHEMA), '.', QUOTENAME(TABLE_NAME))
+SELECT CONCAT('SELECT ''', TABLE_NAME, ''' AS TABLE_NAME', ', COUNT(''*'') AS COUNT_ALL_RECORDS', COLUMN_NAME, ', ', 'COUNT(DISTINCT ', COLUMN_NAME, ') AS COUNTDISTINCT_', COLUMN_NAME, ' FROM ', QUOTENAME(TABLE_SCHEMA), '.', QUOTENAME(TABLE_NAME))
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_CATALOG = 'Bronze_FinOps_Entity'
+      AND TABLE_SCHEMA = 'dbo'
+      --AND TABLE_NAME = 'omlegalentity'
+      AND COLUMN_NAME <> 'RECID' AND COLUMN_NAME LIKE '%ID'
+ORDER BY TABLE_NAME, COLUMN_NAME
+--PRINT @SQL
+--*/
+
+--/*--One row for all columns.
+WITH clauses AS (
+SELECT
+    CONCAT('SELECT ''', TABLE_NAME, ''' AS TABLE_NAME') AS TABLE_NAME,
+    'COUNT(*) AS COUNT_ALL_RECORDS' AS COUNT_ALL,
+    --TABLE_NAME,
+    --COLUMN_NAME,
+    CONCAT('COUNT(DISTINCT ', COLUMN_NAME, ') AS COUNTDISTINCT_', COLUMN_NAME) AS COUNT_DISTINCT,
+    CONCAT('FROM ', QUOTENAME(TABLE_SCHEMA), '.', QUOTENAME(TABLE_NAME)) AS FROM_CLAUSE
+FROM Bronze_FinOps_Entity.INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_CATALOG = 'Bronze_FinOps_Entity'
+      AND TABLE_SCHEMA = 'dbo'
+      AND TABLE_NAME = 'assetlocationentity'--'omlegalentity'
+      --AND COLUMN_NAME <> 'RECID' AND COLUMN_NAME LIKE '%ID'
+      --AND COLUMN_NAME IN ('', '')
+)
+,
+clauses_concat AS (
+SELECT
+    TABLE_NAME,
+    COUNT_ALL,
+    FROM_CLAUSE,
+    STRING_AGG(CAST(COUNT_DISTINCT AS NVARCHAR(MAX)), ', ') AGG--Overcome 8K STRING_AGG Limit.
+FROM clauses
+GROUP BY TABLE_NAME, COUNT_ALL, FROM_CLAUSE
+)
+
+/*--1,row.
+SELECT
+    CONCAT(TABLE_NAME, ', ', COUNT_ALL, ', ', AGG, ' ', FROM_CLAUSE) AS [SQL]
+FROM clauses_concat
+--*/
+
+--/*--1 column (unpivoted).
+,
+pivot_columns_concat as (
+SELECT
+    TABLE_NAME,
+    COUNT_ALL,
+    FROM_CLAUSE,
+    STRING_AGG(CAST(COUNT_DISTINCT AS NVARCHAR(MAX)), ', ') AGG--Overcome 8K STRING_AGG Limit.
+FROM clauses
+GROUP BY TABLE_NAME, COUNT_ALL, FROM_CLAUSE
+)
+SELECT
+    CONCAT('WITH row_counts AS (', TABLE_NAME, ', ', COUNT_ALL, ', ', AGG, ' ', FROM_CLAUSE, ')', CHAR(13), CHAR(10), 'SELECT r.TABLE_NAME, c.COLUMN_NAME, c.COLUMN_VALUE FROM row_counts r CROSS APPLY (VALUES', pivot_columns_concat, ') AS c(COLUMN_NAME, COLUMN_VALUE)') AS [SQL]
+FROM clauses_concat
+--*/
+--*/
+
+/*--Business key.
+SELECT COUNT(LEGALENTITYID), COUNT(DISTINCT LEGALENTITYID)
+FROM dbo.omlegalentity
+--*/
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------

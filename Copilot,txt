@@ -1,0 +1,380 @@
+Information:
+
+The source system table name is Account.
+
+The columns and data types for the source system table in the source database Vertrax Bronze database are:
+column_name	data_type
+AccountCD	varchar
+AccountClassID	varchar
+AccountGroupID	int
+AccountID	int
+Active	bit
+AllowManualEntry	bit
+Box1099	smallint
+COAOrder	smallint
+ControlAccountModule	varchar
+CreatedByID	varchar
+CreatedByScreenID	varchar
+CreatedDateTime	datetime2
+CuryID	varchar
+Description	varchar
+DirectPost	bit
+GLConsolAccountCD	varchar
+IsCashAccount	bit
+LastModifiedByID	varchar
+LastModifiedByScreenID	varchar
+LastModifiedDateTime	datetime2
+NoSubDetail	bit
+NoteID	varchar
+PostOption	varchar
+RequireUnits	bit
+RevalCuryRateTypeId	varchar
+TaxCategoryID	varchar
+Type	varchar
+DeletedDatabaseRecord	bit
+
+SQL query run against the VBYOD source database
+SELECT
+    o.name AS TableName,
+    i.name AS PrimaryKeyName,
+    c.name AS ColumnName,
+    ic.index_column_id AS ColumnPosition
+FROM
+    sys.objects o
+INNER JOIN
+    sys.indexes i ON i.object_id = o.object_id
+INNER JOIN
+    sys.index_columns ic ON ic.object_id = i.object_id AND ic.index_id = i.index_id
+INNER JOIN
+    sys.columns c ON c.object_id = ic.object_id AND c.column_id = ic.column_id
+WHERE
+    o.is_ms_shipped = 0 -- Filter out system tables
+    AND i.is_primary_key = 1
+    --AND o.name = 'YourTableName' -- Replace 'YourTableName' with the actual table name
+ORDER BY
+    o.name,
+    ic.index_column_id;
+
+The results of the above SQL query:
+TableName	PrimaryKeyName	ColumnName	ColumnPosition
+Account	PK_Account	AccountID	1
+Address	PK_Address	AddressID	1
+ARBalances	PK_ARBalances	BranchID	1
+ARBalances	PK_ARBalances	CustomerID	2
+ARBalances	PK_ARBalances	CustomerLocationID	3
+ARDiscount	PK_ARDiscount	DiscountID	1
+ARInvoice	PK_ARInvoice	DocType	1
+ARInvoice	PK_ARInvoice	RefNbr	2
+ARPayment	PK_ARPayment	DocType	1
+ARPayment	PK_ARPayment	RefNbr	2
+ARPriceWorksheet	PK_ARPriceWorksheet	RefNbr	1
+ARPriceWorksheetDetail	PK_ARPriceWorksheetDetail	LineID	1
+ARPriceWorksheetDetail	PK_ARPriceWorksheetDetail	RefNbr	2
+ARSalesPrice	PK_ARSalesPrice	RecordID	1
+ARStatement	PK_ARStatement	BranchID	1
+ARStatement	PK_ARStatement	CuryID	2
+ARStatement	PK_ARStatement	CustomerID	3
+ARStatement	PK_ARStatement	StatementDate	4
+ARTran	PK_ARTran	LineNbr	1
+ARTran	PK_ARTran	RefNbr	2
+ARTran	PK_ARTran	TranType	3
+BAccount	PK_BAccount	BAccountID	1
+BasePriceMatrix	PK__BasePric__3214EC27BF8C9E29	ID	1
+BasePriceMatrix2	PK__BasePric__3214EC275947498A	ID	1
+Branch	PK_Branch	BranchID	1
+Competitor	PK_Competitor	CompetitorId	1
+Contact	PK_Contact	ContactID	1
+Customer	PK_Customer	BAccountID	1
+CustomerPaymentMethod	PK_CustomerPaymentMethod	PMInstanceID	1
+CustSalesPeople	PK_CustSalesPeople	BAccountID	1
+CustSalesPeople	PK_CustSalesPeople	LocationID	2
+CustSalesPeople	PK_CustSalesPeople	SalesPersonID	3
+DiscountDetail	PK_DiscountDetail	DiscountDetailsID	1
+DiscountSequence	PK_DiscountSequence	DiscountID	1
+DiscountSequence	PK_DiscountSequence	DiscountSequenceID	2
+FinPeriod	PK_FinPeriod	FinPeriodID	1
+FSEquipment	PK_FSEquipment	SMEquipmentID	1
+FSEquipmentType	PK_FSEquipmentType	EquipmentTypeID	1
+GLTran	PK_GLTran	BatchNbr	1
+GLTran	PK_GLTran	LineNbr	2
+GLTran	PK_GLTran	Module	3
+INCategory	PK_INCategory	CategoryID	1
+INItemCategory	PK_INItemCategory	CategoryID	1
+INItemCategory	PK_INItemCategory	InventoryID	2
+INItemClass	PK_INItemClass	ItemClassID	1
+INSite	PK_INSite	SiteID	1
+InterfaceControl_	PK_InterfaceControl	InterfaceName	1
+InterfaceControl_	PK_InterfaceControl	LoadTime	2
+InventoryItem	PK_InventoryItem	InventoryID	1
+Location	PK_Location	BAccountID	1
+Location	PK_Location	LocationID	2
+LocationGroup	PK_LocationGroup	GroupCd	1
+LocationPricePlan	PK_LocationPricePlan	LocationPricePlanId	1
+LocationZone	PK_LocationZone	ZoneCd	1
+MasterFinPeriod	PK_MasterFinPeriod	FinPeriodID	1
+Note	PK_Note	NoteID	1
+OrganizationalStructure	PK_OrganizationalStructure	OrganizationalStructureId	1
+PricePlan	PK_PricePlan	PricePlanId	1
+ReasonCode	PK_ReasonCode	ReasonCodeID	1
+SalesPerson	PK_SalesPerson	SalesPersonID	1
+SOLine	PK_SOLine	LineNbr	1
+SOLine	PK_SOLine	OrderNbr	2
+SOLine	PK_SOLine	OrderType	3
+SOOrder	PK_SOOrder	OrderNbr	1
+SOOrder	PK_SOOrder	OrderType	2
+SOOrderShipment	PK_SOOrderShipment	OrderNbr	1
+SOOrderShipment	PK_SOOrderShipment	OrderType	2
+Sub	PK_Sub	SubID	1
+Users	PK_Users	PKID	1
+VECRLocationCompliance	PK_VECRLocationCompliance	LocationComplianceID	1
+VEDistrict	PK_VEDistrict	DistrictID	1
+VERegion	PK_VERegion	RegionID	1
+VEWindcaveBatchTransaction	PK_VEWindcaveBatchTransaction	LineNbr	1
+VEWindcaveBatchTransaction	PK_VEWindcaveBatchTransaction	RefNbr	2
+
+The Dbt snapshot YAML file snap_account.yml is:
+snapshots:
+  - name: snap_account
+    description: "Tracks historical changes to all account attributes."
+    config:
+      unique_key: 'account_key'
+      strategy: check
+      check_cols: ['lastmodifieddatetime']
+      hard_deletes: invalidate
+      dbt_valid_to_current: "TIMESTAMP '9999-12-31'"
+      quote_columns: true
+      tags: ["silver_snapshot"]
+    columns:
+      - name: account_key
+        data_type: string
+        description: "Primary key generated by dbt"
+        data_tests:
+          - not_null:
+              severity: error
+      - name: accountcd
+        data_type: string
+        description: ""
+      - name: accountclassid
+        data_type: string
+        description: ""
+      - name: accountgroupid
+        data_type: integer
+        description: ""
+      - name: accountid
+        data_type: integer
+        description: ""
+      - name: active
+        data_type: boolean
+        description: ""
+      - name: allowmanualentry
+        data_type: boolean
+        description: ""
+      - name: box1099
+        data_type: short
+        description: ""
+      - name: coaorder
+        data_type: short
+        description: ""
+      - name: controlaccountmodule
+        data_type: string
+        description: ""
+      - name: createdbyid
+        data_type: string
+        description: ""
+      - name: createdbyscreenid
+        data_type: string
+        description: ""
+      - name: createddatetime
+        data_type: timestamp
+        description: ""
+      - name: curyid
+        data_type: string
+        description: ""
+      - name: description
+        data_type: string
+        description: ""
+      - name: directpost
+        data_type: boolean
+        description: ""
+      - name: glconsolaccountcd
+        data_type: string
+        description: ""
+      - name: iscashaccount
+        data_type: boolean
+        description: ""
+      - name: lastmodifiedbyid
+        data_type: string
+        description: ""
+      - name: lastmodifiedbyscreenid
+        data_type: string
+        description: ""
+      - name: lastmodifieddatetime
+        data_type: timestamp
+        description: ""
+      - name: nosubdetail
+        data_type: boolean
+        description: ""
+      - name: noteid
+        data_type: string
+        description: ""
+      - name: postoption
+        data_type: string
+        description: ""
+      - name: requireunits
+        data_type: boolean
+        description: ""
+      - name: revalcuryratetypeid
+        data_type: string
+        description: ""
+      - name: taxcategoryid
+        data_type: string
+        description: ""
+      - name: type
+        data_type: string
+        description: ""
+      - name: deleteddatabaserecord
+        data_type: boolean
+        description: ""
+
+The Dbt snapshot SQL file snap_account.sql is:
+{% snapshot snap_account %}
+with 
+    source as (
+        select
+            accountcd,
+            accountclassid,
+            accountgroupid,
+            accountid,
+            active,
+            allowmanualentry,
+            box1099,
+            coaorder,
+            controlaccountmodule,
+            createdbyid,
+            createdbyscreenid,
+            createddatetime,
+            curyid,
+            description,
+            directpost,
+            glconsolaccountcd,
+            iscashaccount,
+            lastmodifiedbyid,
+            lastmodifiedbyscreenid,
+            lastmodifieddatetime,
+            nosubdetail,
+            noteid,
+            postoption,
+            requireunits,
+            revalcuryratetypeid,
+            taxcategoryid,
+            type,
+            deleteddatabaserecord
+        from {{ source('vebyod', 'account') }}
+        where accountid is not null
+    ),
+    dedup as (
+        select
+            *
+            , row_number() over (partition by accountid order by lastmodifieddatetime desc) as row_num
+        from source
+    ),
+    final as (
+        select
+            {{ dbt_utils.generate_surrogate_key(['accountid']) }} as account_key,
+            accountcd,
+            accountclassid,
+            accountgroupid,
+            accountid,
+            active,
+            allowmanualentry,
+            box1099,
+            coaorder,
+            controlaccountmodule,
+            createdbyid,
+            createdbyscreenid,
+            createddatetime,
+            curyid,
+            description,
+            directpost,
+            glconsolaccountcd,
+            iscashaccount,
+            lastmodifiedbyid,
+            lastmodifiedbyscreenid,
+            lastmodifieddatetime,
+            nosubdetail,
+            noteid,
+            postoption,
+            requireunits,
+            revalcuryratetypeid,
+            taxcategoryid,
+            type,
+            deleteddatabaserecord
+        from dedup
+        where row_num = 1
+    )
+    select *
+    from final
+{% endsnapshot %}
+
+The Wiki markdown table, for the snapshots are:
+| Name | Description | Required <br/>for Gold | Key Columns | Check Columns | Priority |
+| --- | --- | --- | --- | --- | --- |
+| snap_account | Account of the General Ledger | :heavy_check_mark: | AccountID | LastModifiedDateTime | 2 |  |
+| snap_branch | Branch of the company | :heavy_check_mark: | BranchID | All columns (No timestamp) | 7 |  |
+| snap_customer | Customer | :heavy_check_mark: | BAccountID | LastModifiedDateTime | 4 |  |
+| snap_custsalespeople | Salesperson associated with a customer location | :heavy_check_mark: | BAccountID, LocationID, SalesPersonID | LastModifiedDateTime | 13 |  |
+| snap_initemclass | Inventory Item Class | :heavy_check_mark: | ItemClassID | LastModifiedDateTime | 6 |  |
+| snap_inventoryitem | Inventory Items (Stock and non-stock) | :heavy_check_mark: | InventoryID | LastModifiedDateTime | 5 |  |
+| snap_location | Customer Delivery Location | :heavy_check_mark: | BAccountID, LocationID | LastModifiedDateTime | 11 |  |
+| snap_locationgroup | Location Grouping | :heavy_check_mark: | GroupCd | LastModifiedDateTime | 12 |  |
+| snap_organizationalstructure | Regions and Product types | :heavy_check_mark: | OrganizationalStructureId | LastModifiedDateTime | 10 |  |
+| snap_salesperson | Sales Person | :heavy_check_mark: | SalesPersonID | LastModifiedDateTime | 3 |  |
+| snap_sub | Sub-GL Account | :heavy_check_mark: | SubID | LastModifiedDateTime | 1 |  |
+| snap_vedistrict | District | :heavy_check_mark: | DistrictID | LastModifiedDateTime | 8 |  |
+| snap_veregion | Region | :heavy_check_mark: | RegionID | LastModifiedDateTime | 9 |  |
+| snap_address |   |   | AddressID | LastModifiedDateTime |  |  |
+| snap_competitor |   |   | CompetitorId | LastModifiedDateTime |  |  |
+| snap_contact |   |   | ContactID | LastModifiedDateTime |  |  |
+| snap_fsequipmenttype |   |   | EquipmentTypeID | LastModifiedDateTime |  |  |
+| snap_incategory |   |   | CategoryID | LastModifiedDateTime |  |  |
+| snap_insite |   |   | SiteID | LastModifiedDateTime |  |  |
+| snap_locationzone |   |   | ZoneCd | LastModifiedDateTime |  |  |
+| snap_reasoncode |   |   | ReasonCodeID | LastModifiedDateTime |  |  |
+| snap_users |   |   | PKID | All columns (No modified timestamp) |
+
+Rules:
+The snapshot table name should be snap_ + the source table name.
+The surrogate key should be called the source table name. + _key.
+The surrogate key should be generated in the Dbt SQL file using the Key Columns specified in the Wiki.
+There should be at least two and at most three CTE's (Common Table Expressions) in the SQL file, in the following order: source, dedup, final. The dedup CTE is optional.
+The source CTE should filter out rows where all of the columns in the key are either null, or, if the column is of data type string, null or zero length string.
+The name of the Dbt YAML file should be snap_ + the source table name + .yml
+The name of the Dbt SQL file should be snap_ + the source table name + .sql
+The name of the snapshot within the Dbt YAML file should be snap_ + the source table name
+The name of the snapshot within the Dbt SQL file should be snap_ + the source table name
+
+
+Please answer these questions:
+Do all of the columns from the Vertrax Bronze table appear in the Dbt snapshot SQL?
+Do all Vertrax Bronze columns appear in the Dbt YAML file?
+Do the Dbt SQL and Dbt YAML snapshot files fully align?
+Is the dbt yaml code formatted correctly?
+Is the dbt SQL snapshot code formatted correctly?
+Is the dbt SQL snapshot code in snake case, ignoring column names?
+Is all the dbt SQL snapshot code in lower case?
+Do the data types of the columns in the source table match the data types of the columns in the dbt YAML code?
+Do the Check Columns for this table in the wiki match the check_cols in the YAML file?
+Do the Check Columns for this table in the wiki match the window function in the Dbt SQL file?
+Are deleted records handled by the check strategy, using the check column specified in the Wiki, with hard deletes invalidated?
+Are the CTE's in the SQL File correct?
+Does the source CTE filter out rows in which each column in the key is null or blank?
+Is the snapshot table name correct?
+Is the Surrogate key named correctly?
+Are the SQL and YAML files named correctly?
+Is the snapshot named correctly within the SQL and YAML files?
+Does the VEBYOD SQL Server source database primary key for this table match the Key Columns in the Dbt YAML file?
+Does the VEBYOD SQL Server source database primary key for this table match the Key Columns in the Dbt SQL file?
+Does the VEBYOD SQL Server source database primary key for this table match the Key Columns in the Wiki?
+Does the Key Column in the wiki table for the snapshot match the key in the Dbt YAML file?
+Does the Key Column in the wiki table for the snapshot match the key in the Dbt SQL file?
+Does surrogate key in the Dbt SQL file match the Key Columns in the wiki?

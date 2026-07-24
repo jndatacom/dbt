@@ -1,0 +1,71 @@
+Cherwell ticket 9922809 https://myservicegov.datacom.co.nz/CherwellClient/Access/Command/Queries.GoToRecord?BusObID=Incident&PublicID=9922809&_=6460da97
+
+AIAL
+CAG
+https://facauth-akl.datacom.net.nz/saml-sp/cag/login/
+Should show FWA-AIAL-NZ
+https://portal.azure.com/#browse/Microsoft.Synapse%2Fworkspaces
+admin.JohnNe@aucklandairport.co.nz
+Goodmorning.1!
+john.newell@datacom.com
+aia-rds-jmp01
+Username: AKLISN\admin.JohnNe
+Goodmorning.1!
+
+On Prem:
+Ignore retail fails
+Ignore Aries Consolidation
+-----------------------------------------------
+C3
+nz\JohnN
+OrangeWhaleDivided61
+https://aegis.c3.co.nz/Login
+c3Sh1!
+	Need to extend account (expires every month)
+Servers:
+c3prdsql05
+C3SSRS02
+
+On call monitor c3prdsql04 Wherescape on the Monday
+Data Source: C3ShipMasterReports_Prod
+C3 Limited
+D6CN 1AM0 0LMH KKCM CLBG LC2Q
+
+JN Code on server C3PRDSQL05:
+C:\Users\johnn\Documents\Code\
+-----------------------------------------------
+UDC
+100.88.16.61
+av-john.newell@udc.co.nz
+UDC\av-John.Newell
+z	TodayIsWednesday123!
+89793
+UDCWUTSQL05
+	
+Monitor
+	on prem
+	MDP
+https://datacomgroup.atlassian.net/wiki/spaces/DS/pages/38605947176/Connecting+to+the+UDC+servers
+
+UDC MDP contact:
+hamish.morgan@datacom.com
+-----------------------------------------------
+On Call:
+1 hour/day
+Check b4 10AM meeting
+AIAL
+	Synapse AOS APD
+C3
+	Wherescape
+		05 04
+		SS Agent
+Timesheet:
+On-Call for BI Support
+-----------------------------------------------
+goldpine\newellj
+johnnewell@goldpine.co.nz
+Need pw reset
+-----------------------------------------------
+
+
+

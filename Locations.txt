@@ -1,0 +1,14 @@
+smtp.john.joseph.newell@gmail.com
+
+https://www.freesqldatabase.com/account/
+john.joseph.newell@gmail.com
+freesqldatabaseSh1
+Host: sql12.freesqldatabase.com
+Database name: sql12630160
+Database user: sql12630160
+Database password: ZqHTtXHl89
+Port number: 3306
+
+DBT
+gmailacct j.j.n
+4K5UJR7XHR6KCENDMBJFGY4N

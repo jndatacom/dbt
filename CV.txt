@@ -1,0 +1,100 @@
+Prep spiel on each.
+
+2017-2022
+	Power BI
+	SSAS
+		Tabular (Sommerset?])
+		Multidim (Mult customers)
+	Wherescape (Health, Genesis, Z Energy)
+	Data vault (Methanex)
+	Kafka (AK Transport)
+	GIS (AK Transport)
+	SAS?
+	MDM (ACC)
+	Data Lake (NZ Rail)
+
+2022
+WDC
+	zSynapse
+	Databricks
+	Azure SQL
+	Solution design
+
+LINZ
+	Azure SQL
+	ADL
+		File Share
+	ADF
+	Data Modeling
+	zPower BI
+	Suss/sell services
+
+NOWNZ
+	Python Pandas DQ (Jupyter)
+		OO?
+
+2023
+EECA
+	Synapse
+	Azure SQL
+		FrameWorkk
+	SharePoint
+	SalesForce
+	zPower BI
+	
+ACC
+	Power BI (replacing Excel baset reporting)
+		Dax
+		Data Modeling: Power Query/M
+		Devops
+		Visn
+		CHARTICULATOR
+	Dimensional Modeling
+	SharePoint
+	BA specs-requirements, Wireframes, Interview board
+	Suss/sell services
+
+Need:
+	SOLN DESIGN
+	MANAGEMENT
+		Acting
+		Dealing with
+	SCRUM
+	DATA GOVERNANCE
+	Snowflake
+	More Databricks
+	(Re)Build Datacom MDP
+	Geospatial
+	Temporal
+	Graph
+	Data Vault?
+	ML
+	R
+	Amazon
+	Google?
+	Confluence (Kafka)?
+	HDInsight?
+	SAP?
+	Informatica?
+	Qlik
+	Tableau
+	R Shiny?
+	D?
+
+---------------------------------------------------
+Skills
+Dim model (prep tests)
+Relation model (prep tests)
+Graph model?
+Temporal model?
+
+Performance Tuning
+
+Sales/Presales
+Influencing
+Consulting
+
+SoW
+
+DEVOPS
+
